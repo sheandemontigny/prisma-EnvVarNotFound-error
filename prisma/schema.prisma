@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Container {
+  id     Int      @id @default(autoincrement())
+  Record Record[]
+}
+
+model RecordConfig {
+  id     Int      @id @default(autoincrement())
+  Record Record[]
+}
+
+model RecordLocation {
+  id       Int    @id @default(autoincrement())
+  location String @unique
+
+  Record Record[]
+
+}
+
+model RecordType {
+  id     Int      @id @default(autoincrement())
+  type   String   @unique
+  Record Record[]
+}
+
+model Record {
+  id           Int            @id @default(autoincrement())
+  location     RecordLocation @relation(fields: [locationId], references: [id])
+  locationId   Int
+  type         RecordType     @relation(fields: [recordTypeId], references: [id])
+  recordTypeId Int
+  config       RecordConfig?  @relation(fields: [configId], references: [id])
+  configId     Int?
+  container    Container      @relation(fields: [containerId], references: [id])
+  containerId  Int
+}
